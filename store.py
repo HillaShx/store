@@ -3,15 +3,46 @@ from sys import argv
 import json
 import pymysql
 
-@get("/admin")
+connection = pymysql.connect(host='localhost', user='root', password='root', db='bootcamp', charset='utf8', cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+
+@get('/admin')
 def admin_portal():
 	return template("pages/admin.html")
 
-
-
-@get("/")
+@get('/')
 def index():
     return template("index.html")
+
+@post('/category')
+def add_category():
+  result = {}
+  category_name = request.forms.get("name")
+  if not category_name:
+    result['STATUS'] = 'ERROR'
+    result['CODE'] = 400
+    result['MSG'] = 'Name parameter is missing'
+  else:
+    sql = "INSERT INTO Categories (name) VALUES ('%s')" % category_name
+    if_exists = "SELECT * FROM Categories WHERE name = '%s'" % category_name
+    with connection.cursor() as cursor:
+      try:
+        cursor.execute(if_exists)
+        if cursor.fetchone():
+          result['STATUS'] = 'ERROR'
+          result['CODE'] = 200
+          result['MSG'] = 'Category already exists'
+        else:
+          cursor.execute(sql)
+          result['CAT_ID'] = cursor.lastrowid
+          result['STATUS'] = 'SUCCESS'
+          result['CODE'] = 201
+      except:
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 500
+        result['MSG'] = 'Internal server error'
+      finally:
+        return json.dumps(result)
+    
 
 
 @get('/js/<filename:re:.*\.js>')
@@ -29,4 +60,4 @@ def images(filename):
     return static_file(filename, root='images')
 
 
-run(host='0.0.0.0', port=argv[1])
+run(host='localhost', port=7000)
