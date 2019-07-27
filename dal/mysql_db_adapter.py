@@ -44,7 +44,7 @@ class MySqlAdapter(BaseDatabaseAdapter):
     with self._connection.cursor() as cursor:
       try:
         cursor.execute(if_exists)
-        if cursor.fetchone():
+        if not cursor.fetchone():
           result['STATUS'] = 'ERROR'
           result['CODE'] = 404
           result['MSG'] = 'Category not found'
