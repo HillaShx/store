@@ -21,7 +21,7 @@ class BaseDatabaseAdapter(ABC):
     pass
 
   @abstractmethod
-  def edit_product(self, product):
+  def update_product(self, product):
     # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
     pass
 

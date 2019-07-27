@@ -75,21 +75,62 @@ class MySqlAdapter(BaseDatabaseAdapter):
 
   def add_product(self, product):
     # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
+
+    # product_details = {'title': request.forms.get('title'), 'desc': request.forms.get('desc'), 'price': request.forms.get('price'), 'img_url': request.forms.get('img_url'), 'category': request.forms.get('category'), 'favorite': request.forms.get('favorite')}
+    # if request.forms.get('id'):
+    #   product_details['id'] = request.forms.get('id')
+    #   sql = "INSERT INTO Products (title, description, price, img_url, category, favorite) VALUES (%s, %s, %g, %s, %d, )"
+
     
     pass
 
-  def edit_product(self, product):
+  def update_product(self, product):
     # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
+
+    # update_product
+    # @post
+    # finding the different value
+    # { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
     pass
 
   def get_product(self, product_id):
-    pass
+    result = {}
+    sql = "SELECT * FROM Products WHERE id = %d" % product_id
+    with self._connection.cursor() as cursor:
+      try:
+        cursor.execute(sql)
+        findings = cursor.fetchone()
+        if not findings:
+          result['STATUS'] = 'ERROR'
+          result['CODE'] = 404
+          result['MSG'] = 'Product not found'
+        else:
+          result['STATUS'] = 'SUCCESS'
+          result['CODE'] = 200
+          result['PRODUCT'] = findings
+      except:
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 500
+        result['MSG'] = 'Internal server error'
+      return result
 
   def delete_product(self, product_id):
     pass
 
   def list_all_products(self):
-    pass
+    result = {}
+    sql = "SELECT * FROM Products"
+    with self._connection.cursor() as cursor:
+      try:
+        cursor.execute(sql)
+        result['PRODUCTS'] = cursor.fetchall()
+        result['STATUS'] = 'SUCCESS'
+        result['CODE'] = 200
+      except:
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 500
+        result['MSG'] = "Internal server error"
+    return result
 
   def list_products_by_category(self, category):
     pass

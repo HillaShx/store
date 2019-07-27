@@ -32,15 +32,19 @@ def list_categories():
   
 @post('/product')
 def add_edit_product():
-  product_details = {'title': request.forms.get('title'), 'desc': request.forms.get('desc'), 'favorite': request.forms.get('favorite'), 'price': request.forms.get('price'), 'img_url': request.forms.get('img_url'), 'category': request.forms.get('category')}
-  if request.forms.get('id'):
-    product_details['id'] = request.forms.get('id')
-    sql = "INSERT INTO Products (title, description, price, image_url,"
+  print(request.json)
+  
 
-# update_product
-# @post
-# finding the different value
-# { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
+@get('/product/<product_id:int>')
+def get_product(product_id):
+  return json.dumps(_db_adapter.get_product(product_id))
+
+@get('/products')
+def get_all_products():
+  return json.dumps(_db_adapter.list_all_products())
+
+
+
 
 @get('/js/<filename:re:.*\.js>')
 def javascripts(filename):

@@ -6,7 +6,7 @@
 -- 	(id INT AUTO_INCREMENT PRIMARY KEY,
 --     title VARCHAR(30) UNIQUE NOT NULL,
 --     description VARCHAR(420),
---     price DECIMAL(5,2) NOT NULL,
+--     price TINYINT NOT NULL,
 --     img_url VARCHAR(1000),
 --     category INT NOT NULL,
 --     favorite BOOL NOT NULL DEFAULT FALSE,
@@ -32,4 +32,6 @@
 
 select * from Categories;
 
+alter table Products modify column price 
 
+describe Products;
