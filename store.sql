@@ -29,4 +29,7 @@
 --     ('Arayes', 'A pita bread stuffed with seasoned ground Beyond Meat, tomato salad on the side', 35, 'https://scontent.ftlv2-1.fna.fbcdn.net/v/t1.0-9/61316479_10220069628310094_8041213792215891968_n.jpg?_nc_cat=106&_nc_oc=AQnGfUFGK10piqw1daXK3FEu0xPXtysDG0uHkySAA3jYyacdRpi3tWAmxpCD8JNLVVp-Vimxg3I3oHhTS5nNgaBo&_nc_ht=scontent.ftlv2-1.fna&oh=1e09a6fb5a4ee1c6df707cca05d7cf94&oe=5DAB3E8A', 1),
 --     ('Crispy Onion', 'Deep fried coated onion rings', 15, 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/OnionRings.JPG/800px-OnionRings.JPG', 2),
 --     ('Seasoned Fries', 'French fries with seasoning', 15, 'https://vegout.co.il/uploads/reviews_images/12158/1.jpg', 2);
-    
+
+select * from Categories;
+
+
