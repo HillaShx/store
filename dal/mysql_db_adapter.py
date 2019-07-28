@@ -95,25 +95,6 @@ class MySqlAdapter(BaseDatabaseAdapter):
           result['STATUS'] = 'ERROR'
           result['CODE'] = 500
           result['MSG'] = 'Internal server error'
-          
-    return result
-
-  def update_product(self, product):
-    # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
-    result = {}
-    # diff =  { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
-    sql = "UPDATE Products SET title = '%s', description = '%s', price = %d, img_url = '%s', category = %d, favorite = %s WHERE id = %d" % (product['title'], product['desc'], int(product['price']), product['img_url'], int(product['category']), product['favorite'], int(product['id']))
-    print(sql)
-    with self._connection.cursor() as cursor:
-      try:
-        cursor.execute(sql)
-        result['STATUS'] = 'SUCCESS'
-        result['CODE'] = 201
-        result['PRODUCT_ID'] = cursor.lastrowid
-      except:
-        result['STATUS'] = 'ERROR'
-        result['CODE'] = 500
-        result['MSG'] = 'Internal server error'
     return result
 
   def get_product(self, product_id):
@@ -174,6 +155,23 @@ class MySqlAdapter(BaseDatabaseAdapter):
           result['MSG'] = 'Internal server error'
     return result
 
+  def update_product(self, product):
+    # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
+    result = {}
+    # diff =  { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
+    sql = "UPDATE Products SET title = '%s', description = '%s', price = %d, img_url = '%s', category = %d, favorite = %s WHERE id = %d" % (product['title'], product['desc'], int(product['price']), product['img_url'], int(product['category']), product['favorite'], int(product['id']))
+    print(sql)
+    with self._connection.cursor() as cursor:
+      try:
+        cursor.execute(sql)
+        result['STATUS'] = 'SUCCESS'
+        result['CODE'] = 201
+        result['PRODUCT_ID'] = cursor.lastrowid
+      except:
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 500
+        result['MSG'] = 'Internal server error'
+    return result
 
   def delete_product(self, product_id):
     result = {}
