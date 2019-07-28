@@ -32,8 +32,15 @@ def list_categories():
   
 @post('/product')
 def add_edit_product():
-  print(request.json)
-  
+  # {'category': '1', 'title': 'jklj', 'desc': 'ghht', 'price': '90', 'img_url': 'jklj', 'id': ''}
+  product_details = dict(request.forms)
+  if 'favorite' in product_details.keys():
+    product_details['favorite'] = True
+  else:
+    product_details['favorite'] = False
+  if product_details['id']:
+    return _db_adapter.update_product(product_details)
+  return json.dumps(_db_adapter.add_product(product_details))
 
 @get('/product/<product_id:int>')
 def get_product(product_id):
@@ -43,6 +50,13 @@ def get_product(product_id):
 def get_all_products():
   return json.dumps(_db_adapter.list_all_products())
 
+@get('/category/<category_id:int>/products')
+def get_products_by_category(category_id):
+  return json.dumps(_db_adapter.list_products_by_category(category_id))
+
+@delete('/product/<product_id:int>')
+def delete_product(product_id):
+  return json.dumps(_db_adapter.delete_product(product_id))
 
 
 

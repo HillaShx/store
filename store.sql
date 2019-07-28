@@ -30,8 +30,12 @@
 --     ('Crispy Onion', 'Deep fried coated onion rings', 15, 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/OnionRings.JPG/800px-OnionRings.JPG', 2),
 --     ('Seasoned Fries', 'French fries with seasoning', 15, 'https://vegout.co.il/uploads/reviews_images/12158/1.jpg', 2);
 
-select * from Categories;
+select * from Products;
 
-alter table Products modify column price 
+ALTER TABLE `Products` CHANGE COLUMN `desc` `description` VARCHAR(420);
+
+
 
 describe Products;
+
+DELETE FROM Products WHERE id = 19;

@@ -75,23 +75,46 @@ class MySqlAdapter(BaseDatabaseAdapter):
 
   def add_product(self, product):
     # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
-
-    # product_details = {'title': request.forms.get('title'), 'desc': request.forms.get('desc'), 'price': request.forms.get('price'), 'img_url': request.forms.get('img_url'), 'category': request.forms.get('category'), 'favorite': request.forms.get('favorite')}
-    # if request.forms.get('id'):
-    #   product_details['id'] = request.forms.get('id')
-    #   sql = "INSERT INTO Products (title, description, price, img_url, category, favorite) VALUES (%s, %s, %g, %s, %d, )"
-
-    
-    pass
+    result = {}
+    sql = "INSERT INTO `Products` (`title`, `desc`, `price`, `img_url`, `category`, `favorite`) VALUES ('%s', '%s', %d, '%s', %d, %s)" % (product['title'], product['desc'], int(product['price']), product['img_url'], int(product['category']), product['favorite'])
+    if_exists_category = "SELECT id FROM Categories"
+    with self._connection.cursor() as cursor:
+        try:
+          cursor.execute(if_exists_category)
+          list_ids = [x['id'] for x in cursor.fetchall()]
+          if not int(product['category']) in list_ids:
+            result['STATUS'] = 'ERROR'
+            result['CODE'] = 404
+            result['MSG'] = 'Category not found'
+          else:
+            cursor.execute(sql)
+            result['STATUS'] = 'SUCCESS'
+            result['CODE'] = 201
+            result['PRODUCT_ID'] = cursor.lastrowid
+        except:
+          result['STATUS'] = 'ERROR'
+          result['CODE'] = 500
+          result['MSG'] = 'Internal server error'
+          
+    return result
 
   def update_product(self, product):
     # product is a dictionary containing the keys: id (int), title (str), desc (str), price (int), img_url (str), category (str), favorite (bool)
-
-    # update_product
-    # @post
-    # finding the different value
-    # { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
-    pass
+    result = {}
+    # diff =  { k : dict2[k] for k in dict2 if dict2[k] != dict1[k] }
+    sql = "UPDATE Products SET title = '%s', description = '%s', price = %d, img_url = '%s', category = %d, favorite = %s WHERE id = %d" % (product['title'], product['desc'], int(product['price']), product['img_url'], int(product['category']), product['favorite'], int(product['id']))
+    print(sql)
+    with self._connection.cursor() as cursor:
+      try:
+        cursor.execute(sql)
+        result['STATUS'] = 'SUCCESS'
+        result['CODE'] = 201
+        result['PRODUCT_ID'] = cursor.lastrowid
+      except:
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 500
+        result['MSG'] = 'Internal server error'
+    return result
 
   def get_product(self, product_id):
     result = {}
@@ -114,9 +137,6 @@ class MySqlAdapter(BaseDatabaseAdapter):
         result['MSG'] = 'Internal server error'
       return result
 
-  def delete_product(self, product_id):
-    pass
-
   def list_all_products(self):
     result = {}
     sql = "SELECT * FROM Products"
@@ -132,5 +152,46 @@ class MySqlAdapter(BaseDatabaseAdapter):
         result['MSG'] = "Internal server error"
     return result
 
-  def list_products_by_category(self, category):
-    pass
+  def list_products_by_category(self, category_id):
+    result = {}
+    sql = "SELECT * FROM Products WHERE category = %d" % int(category_id)
+    if_exists = "SELECT * FROM Categories WHERE id = %d" % int(category_id)
+    with self._connection.cursor() as cursor:
+      cursor.execute(if_exists)
+      if not cursor.fetchone():
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 404
+        result['MSG'] = 'Category not found'
+      else:
+        try:
+          cursor.execute(sql)
+          result['STATUS'] = 'SUCCESS'
+          result['CODE'] = 200
+          result['PRODUCTS'] = cursor.fetchall()
+        except:
+          result['STATUS'] = 'ERROR'
+          result['CODE'] = 500
+          result['MSG'] = 'Internal server error'
+    return result
+
+
+  def delete_product(self, product_id):
+    result = {}
+    sql = "DELETE FROM Products WHERE id = %d" % int(product_id)
+    if_exists = "SELECT * FROM Products WHERE id = %d" % int(product_id)
+    with self._connection.cursor() as cursor:
+      cursor.execute(if_exists)
+      if not cursor.fetchone():
+        result['STATUS'] = 'ERROR'
+        result['CODE'] = 404
+        result['MSG'] = 'Product not found'
+      else:
+        try:
+          cursor.execute(sql)
+          result['STATUS'] = 'SUCCESS'
+          result['CODE'] = 201
+        except:
+          result['STATUS'] = 'ERROR'
+          result['CODE'] = 500
+          result['MSG'] = 'Internal server error'
+    return result
